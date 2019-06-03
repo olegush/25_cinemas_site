@@ -3,9 +3,7 @@ import time
 
 import concurrent.futures
 
-from dotenv import load_dotenv
 from flask import Flask, render_template, jsonify
-
 
 from cinemas import get_content, parse_afisha_page, parse_kinopoisk_page
 
@@ -53,6 +51,5 @@ def jsonify_films_list():
 
 
 if __name__ == "__main__":
-    load_dotenv()
-    app.debug = os.getenv('DEBUG')
+    app.debug = os.environ['DEBUG']
     app.run()
