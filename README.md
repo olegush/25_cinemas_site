@@ -51,7 +51,11 @@ web: python3 server.py
 
 4. Open https://[your-app-name].herokuapp.com/ in your browser
 
-5. For reading logs install [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli#download-and-install).
+5. For reading logs install [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli#download-and-install), log in and use:
+
+```bash
+$ heroku logs -t --app app-name
+```
 
 
 # Project Goals
