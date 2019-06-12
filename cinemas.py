@@ -1,4 +1,3 @@
-import time
 import re
 
 import requests
@@ -16,21 +15,12 @@ def get_content(url, params, cache):
     cache_content = c.get(cache_id)
     if cache_content is not None:
         return cache_content
-    try:
-        headers = {'user-agent': UserAgent().chrome}
-        resp = requests.get(url, params=params, headers=headers)
-        resp.raise_for_status()
-        content = resp.text
-        c.set(cache_id, content)
-        return content
-    except requests.exceptions.Timeout as err:
-        print('TimeoutError:', err)
-    except requests.exceptions.HTTPError as err:
-        print('HTTPError', err)
-    except requests.exceptions.ConnectionError as err:
-        print('ConnectionError', err)
-    except requests.exceptions.RequestException as err:
-        print ('Another Request Error', err)
+    headers = {'user-agent': UserAgent().chrome}
+    resp = requests.get(url, params=params, headers=headers)
+    resp.raise_for_status()
+    content = resp.text
+    c.set(cache_id, content)
+    return content
 
 
 def parse_afisha_page(content):

@@ -1,6 +1,7 @@
 import os
-import time
 
+import requests
+from dotenv import load_dotenv
 import concurrent.futures
 from flask import Flask, render_template, jsonify
 
@@ -24,6 +25,7 @@ def thread_kinopoisk_function(movie):
 def films_list():
     payload_afisha = {'view': 'list'}
     url_afisha = 'https://www.afisha.ru/spb/schedule_cinema/'
+
     content_afisha = get_content(url_afisha, payload_afisha, CACHE_AFISHA)
     afisha_data = parse_afisha_page(content_afisha)
     with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -39,7 +41,20 @@ def films_list():
 
 @app.route('/')
 def render_films_list():
-    return render_template('films_list.html', movies=films_list()[:MOVIES_COUNT])
+    movies = []
+    error = ''
+    try:
+        movies = films_list()[:MOVIES_COUNT]
+    except requests.exceptions.Timeout as e:
+        error = 'TimeoutError'
+    except requests.exceptions.HTTPError as e:
+        error = 'HTTPError'
+    except requests.exceptions.ConnectionError as e:
+        error = 'ConnectionError'
+    except requests.exceptions.RequestException as e:
+        error = 'Another Request Error'
+    finally:
+        return render_template('films_list.html', movies=movies, error=error)
 
 
 @app.route('/api/', methods=['GET'])
@@ -48,6 +63,5 @@ def jsonify_films_list():
 
 
 if __name__ == "__main__":
-    app.debug = os.environ['DEBUG']
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    load_dotenv()
+    app.run()
