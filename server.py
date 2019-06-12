@@ -63,4 +63,4 @@ def jsonify_films_list():
 
 if __name__ == "__main__":
     load_dotenv()
-    app.run(port=os.environ['PORT'])
+    app.run(port=int(os.environ['PORT']))
