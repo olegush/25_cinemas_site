@@ -14,6 +14,15 @@ Python 3.6 and libraries from **requirements.txt** should be installed.
 $ pip install -r requirements.txt
 ```
 
+Put all necessary parameters to .env file.
+
+```bash
+FLASK_DEBUG=TRUE
+PORT=8000
+```
+
+FLASK_DEBUG environment variable Flask loads by itself, but for PORT loading we should use python-dotenv package.
+
 
 # Quickstart
 
@@ -47,7 +56,7 @@ web: python3 server.py
 
 ```
 
-3. Add your environment variables to Settings > Config Vars section (DEBUG and PORT).
+3. Add your environment variables to Settings > Config Vars section (FLASK_DEBUG and PORT).
 
 4. Open https://[your-app-name].herokuapp.com/ in your browser
 

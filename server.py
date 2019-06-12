@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 CACHE_AFISHA = {'threshold': 1, 'default_timeout': 60*60*1}
 CACHE_KINOPOISK = {'threshold': 100, 'default_timeout': 60*60*24}
-MOVIES_COUNT = 12 # use -1 for displaying all movies
+MOVIES_COUNT = 12 # Use -1 for displaying all movies
 
 
 def thread_kinopoisk_function(movie):
@@ -25,7 +25,6 @@ def thread_kinopoisk_function(movie):
 def films_list():
     payload_afisha = {'view': 'list'}
     url_afisha = 'https://www.afisha.ru/spb/schedule_cinema/'
-
     content_afisha = get_content(url_afisha, payload_afisha, CACHE_AFISHA)
     afisha_data = parse_afisha_page(content_afisha)
     with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -64,4 +63,4 @@ def jsonify_films_list():
 
 if __name__ == "__main__":
     load_dotenv()
-    app.run()
+    app.run(port=os.environ['PORT'])

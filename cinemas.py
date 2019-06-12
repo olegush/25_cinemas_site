@@ -49,7 +49,6 @@ def parse_kinopoisk_page(content, year_afisha):
         for movie in soup.find_all('div', class_='element'):
             year_tag = movie.find('span', class_='year')
             year = int(year_tag.string[:4])
-            #print(year)
             rating_tag = year_tag.parent.parent.parent.find('div', class_='rating')
             rating = float(rating_tag.string) if rating_tag else None
             if year == year_afisha:
