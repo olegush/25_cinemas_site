@@ -56,7 +56,7 @@ web: python3 server.py
 
 ```
 
-3. Add your environment variables to Settings > Config Vars section (FLASK_DEBUG and PORT).
+3. Add your environment variables to Settings > Config Vars section (FLASK_DEBUG and PORT). Use HOST=0.0.0.0 and PORT=80
 
 4. Open https://[your-app-name].herokuapp.com/ in your browser
 
