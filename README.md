@@ -1,6 +1,6 @@
 # Cinemas Site
 
-[This site](https://afisha-movies-rating-schedule.herokuapp.com/) shows movies
+Site shows movies
 in Saint Petersburg cinemas, sorted by [Kinopoisk](https://www.kinopoisk.ru/)
 rating. Current schedule parses from [afisha.ru](https://www.afisha.ru/spb/schedule_cinema/?view=list). [API](https://afisha-movies-rating-schedule.herokuapp.com/api) also available.
 
