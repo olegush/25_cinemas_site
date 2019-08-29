@@ -27,8 +27,8 @@ def parse_afisha_page(content):
     soup = BeautifulSoup(content, 'html.parser')
     movies = []
     for movie in soup.find_all('div', class_='new-list__item movie-item'):
-        title = movie.find('a', class_='new-list__item-link').string
-        year = int(movie.find('div', class_='new-list__item-status').string[:4])
+        title = movie.find('a', class_='new-list__item-link').text
+        year = int(movie.find('div', class_='new-list__item-status').text[:4])
         href = movie.find('a', class_='new-list__item-link')['href']
         id_afisha = re.search('\d+', href).group(0)
         descr = ''
@@ -40,6 +40,7 @@ def parse_afisha_page(content):
             'year': year,
             'id_afisha': id_afisha,
             'descr': descr})
+
     return movies
 
 
