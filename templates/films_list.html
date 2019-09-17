@@ -62,13 +62,15 @@
                 <div class="card mb-4 box-shadow">
                   <img class="card-img-top" src="https://st.kp.yandex.net/images/film_big/{{ movie.id_kinopoisk }}.jpg" alt="{{ movie.title }}, {{ movie.year }}" title="{{ movie.title }}, {{ movie.year }}">
                   <div class="card-body">
-                    <p class="card-text"><h4>{{ movie.title }}</h4><p>{{ movie.year }}</p><p>{{ movie.descr }}</p>
+                    <p class="card-text"><h4>{{ movie.title }}</h4><h6>{{ movie.title_eng }}</h6><p></p><p>{{ movie.year }}</p><p>{{ movie.runtime }}</p><p>{{ movie.descr }}</p>
                     <div class="d-flex justify-content-between align-items-center">
                       <div class="btn-group">
                         <a href="https://www.afisha.ru/movie/{{ movie.id_afisha }}" class="btn btn-sm btn-outline-secondary">Афиша</a>
-                        <a href="https://www.kinopoisk.ru/film/{{ movie.id_kinopoisk }}/" class="btn btn-sm btn-outline-secondary">КиноПоиск</a>
+                        <a href="https://www.kinopoisk.ru/film/{{ movie.id_kinopoisk }}/" class="btn btn-sm btn-outline-secondary">КиноПоиск {{ movie.rating_kp }}</a>
+                        {% if movie.id_imdb %}
+                          <a href="https://www.imdb.com/title/{{ movie.id_imdb }}/" class="btn btn-sm btn-outline-secondary">IMDB {{ movie.rating_imdb }}</a>
+                        {% endif %}
                       </div>
-                      <small class="text-muted">{{ movie.rating }}</small>
                     </div>
                   </div>
                 </div>

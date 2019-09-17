@@ -40,21 +40,35 @@ def parse_afisha_page(content):
             'year': year,
             'id_afisha': id_afisha,
             'descr': descr})
-
     return movies
 
 
-def parse_kinopoisk_page(content, year_afisha):
+def parse_kinopoisk_page(content, year):
     soup = BeautifulSoup(content, 'html.parser')
     try:
         for movie in soup.find_all('div', class_='element'):
-            year_tag = movie.find('span', class_='year')
-            year = int(year_tag.string[:4])
-            rating_tag = year_tag.parent.parent.parent.find('div', class_='rating')
-            rating = float(rating_tag.string) if rating_tag else None
-            if year == year_afisha:
-                id_kinopoisk = year_tag.parent.parent.find('a')['data-id']
-                return {'rating': rating, 'id_kinopoisk': id_kinopoisk}
+            year_kp_tag = movie.find('span', class_='year')
+            year_kp = int(year_kp_tag.string[:4])
+            rating_tag = year_kp_tag.parent.parent.parent.find('div', class_='rating')
+            rating_kp = float(rating_tag.string) if rating_tag else None
+            if year_kp == year:
+                title_eng_tag = movie.find('span', class_='gray').text.rpartition(',')
+                title_eng = title_eng_tag[0]
+                runtime = title_eng_tag[2].strip()
+                id_kinopoisk = year_kp_tag.parent.parent.find('a')['data-id']
+                return {'rating_kp': rating_kp, 'id_kinopoisk': id_kinopoisk, 'title_eng': title_eng, 'runtime':  runtime}
     except (TypeError, AttributeError):
         pass
-    return {'rating': None, 'id_kinopoisk': '0'}
+    return {'rating_kp': None, 'id_kinopoisk': '0', 'title_eng': '', 'runtime': ''}
+
+
+def parse_imdb_page(content, year):
+    soup = BeautifulSoup(content, 'html.parser')
+    try:
+        for movie in soup.find_all('div', class_='rating rating-list'):
+            imdb = movie['id'].split('|')
+            id_imdb = imdb[0]
+            rating_imdb = imdb[2]
+            return {'id_imdb': id_imdb, 'rating_imdb': rating_imdb}
+    except (TypeError, AttributeError):
+        return {'id_imdb': '', 'rating_imdb': ''}

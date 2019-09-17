@@ -5,35 +5,45 @@ from dotenv import load_dotenv
 import concurrent.futures
 from flask import Flask, render_template, jsonify
 
-from cinemas import get_content, parse_afisha_page, parse_kinopoisk_page
+from cinemas import get_content, parse_afisha_page, parse_kinopoisk_page, parse_imdb_page
 
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
+URL_AFISHA = 'https://www.afisha.ru/spb/schedule_cinema/'
 CACHE_AFISHA = {'threshold': 1, 'default_timeout': 60*60*1}
-CACHE_KINOPOISK = {'threshold': 100, 'default_timeout': 60*60*24}
-MOVIES_COUNT = 12 # Use -1 for displaying all movies
+URL_KP = 'https://www.kinopoisk.ru/index.php'
+CACHE_KP = {'threshold': 100, 'default_timeout': 60*60*24}
+URL_IMDB = 'https://www.imdb.com/search/title/'
+CACHE_IMDB = {'threshold': 100, 'default_timeout': 60*60*24}
+MOVIES_COUNT = 24 # Use -1 for displaying all movies
 
 
-def thread_kinopoisk_function(movie):
-    url = 'https://www.kinopoisk.ru/index.php'
-    payload = {'kp_query': '{} {}'.format(movie['title'], movie['year'])}
-    content = get_content(url, payload, CACHE_KINOPOISK)
-    return parse_kinopoisk_page(content, movie['year'])
+def thread_kp_imdb_function(movie):
+    payload_kp = {'kp_query': '{} {}'.format(movie['title'], movie['year'])}
+    content_kp = get_content(URL_KP, payload_kp, CACHE_KP)
+    kp_movie = parse_kinopoisk_page(content_kp, movie['year'])
+    if kp_movie['title_eng'] == '':
+        kp_movie['imdb'] = ''
+    else:
+        year = movie['year']
+        payload_imdb = {'title': kp_movie['title_eng'], 'title_type': 'feature', 'release_date': f'{year},{year}'}
+        content_imdb = get_content(URL_IMDB, payload_imdb, CACHE_IMDB)
+        kp_movie.update(parse_imdb_page(content_imdb, movie['year']))
+    return kp_movie
 
 
 def films_list():
     payload_afisha = {'view': 'list'}
-    url_afisha = 'https://www.afisha.ru/spb/schedule_cinema/'
-    content_afisha = get_content(url_afisha, payload_afisha, CACHE_AFISHA)
+    content_afisha = get_content(URL_AFISHA, payload_afisha, CACHE_AFISHA)
     afisha_data = parse_afisha_page(content_afisha)
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        kinopoisk_data = executor.map(thread_kinopoisk_function, afisha_data)
-    for afisha_movie, kinopoisk_movie in zip(afisha_data, list(kinopoisk_data)):
-        afisha_movie.update(kinopoisk_movie)
+        kp_imdb_movie_data = executor.map(thread_kp_imdb_function, afisha_data)
+    for afisha_movie, kp_imdb_movie in zip(afisha_data, list(kp_imdb_movie_data)):
+        afisha_movie.update(kp_imdb_movie)
     movies = sorted(
-        afisha_data,
-        key=lambda x: x['rating'] if x['rating'] else 0,
+        [movie for movie in afisha_data if movie['rating_kp']],
+        key=lambda x: x['rating_kp'],
         reverse=True)
     return movies
 
